@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>BNB Wallet Tracker</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; background: #f3f3f3; }
+.container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 12px; }
+h1 { font-size: 24px; margin-bottom: 10px; }
+.label { font-weight: bold; margin-top: 15px; }
+.box { background: #fafafa; border: 1px solid #ccc; padding: 15px; border-radius: 10px; margin-top: 10px; }
+.value { font-size: 20px; font-weight: bold; margin-top: 8px; }
+.refresh { padding: 10px 20px; font-size: 16px; border-radius: 8px; border: none; background: black; color: white; cursor: pointer; margin-top: 20px; }
+</style>
+
+<script>
+async function loadBalance() {
+    const address = "0xBD4a8a43794A74E143a7Ae548C9576C35b667c2f";
+    const endpoint = "https://bsc.publicnode.com";
+
+    const data = {
+        jsonrpc: "2.0",
+        method: "eth_getBalance",
+        params: [address, "latest"],
+        id: 1
+    };
+
+    try {
+        let response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        let result = await response.json();
+        let wei = parseInt(result.result, 16);
+        let bnb = wei / 1e18;
+
+        document.getElementById("bnb_balance").innerText = bnb.toFixed(6) + " BNB";
+    } 
+    catch (e) {
+        document.getElementById("bnb_balance").innerText = "Error loading balance";
+    }
+}
+
+window.onload = loadBalance;
+</script>
+
+</head>
+<body>
+<div class="container">
+<h1>BNB Wallet Tracker</h1>
+
+<div class="box">
+<div class="label">Wallet Address:</div>
+<div>0xBD4a8a43794A74E143a7Ae548C9576C35b667c2f</div>
+
+<div class="label">UID:</div>
+<div>523872948</div>
+
+<div class="label">BNB Balance:</div>
+<div class="value" id="bnb_balance">Loading...</div>
+</div>
+
+<button class="refresh" onclick="loadBalance()">Refresh Balance</button>
+
+</div>
+</body>
+</html>
